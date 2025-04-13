@@ -5,7 +5,7 @@ python-dotenv==1.0.0
 SQLAlchemy==2.0.21
 Werkzeug==2.0.1
 pandas==2.0.0
-openpyxl==3.1.2
+openpyxl
 numpy
 charset-normalizer==3.4.1
 click==8.1.8
