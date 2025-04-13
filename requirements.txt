@@ -11,7 +11,6 @@ charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
 contourpy==1.1.1
-cupy==12.3.0
 cycler==0.12.1
 et_xmlfile==2.0.0
 fastrlock==0.8.2
@@ -55,9 +54,9 @@ setuptools==75.1.0
 six==1.17.0
 SQLAlchemy==1.4.23
 sympy==1.13.3
-torch==2.1.0+cu118
-torchaudio==2.1.0+cu118
-torchvision==0.16.0+cu118
+torch==2.1.0
+torchaudio==2.1.0
+torchvision==0.16.0
 trimesh==4.6.6
 typing_extensions==4.13.1
 tzdata==2025.2
