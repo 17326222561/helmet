@@ -15,8 +15,8 @@ cycler==0.12.1
 et_xmlfile==2.0.0
 fastrlock==0.8.2
 filelock==3.16.1
-Flask==2.0.1
-Flask-SQLAlchemy==2.5.1
+Flask
+Flask-SQLAlchemy
 fonttools==4.57.0
 fsspec==2025.3.0
 greenlet==3.1.1
