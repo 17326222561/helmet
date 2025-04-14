@@ -9,13 +9,8 @@ os.environ["OMP_NUM_THREADS"] = "1"  # 限制单线程
 # 按 双击 Shift 在所有地方搜索类、文件、工具窗口、操作和设置
 import math
 import copy
-import time
-import collections
-from copy import deepcopy
 import torch.nn.functional as F
 from sympy.physics.control.control_plots import matplotlib
-from torch import optim
-from torch.autograd import Variable
 import numpy as np
 import torch
 import sys
@@ -27,7 +22,7 @@ import torch.nn as nn
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-matplotlib.use('TkAgg')  # 设置后端为TkAg
+
 sys.float_repr_style = 'fixed'
 torch.set_printoptions(sci_mode=False)
 checkpoint = torch.load('all_models_weights-2.pth')
