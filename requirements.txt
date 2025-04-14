@@ -1,4 +1,5 @@
 Flask
+gunicorn==22.0.0
 Flask-SQLAlchemy
 Flask-Cors
 python-dotenv
