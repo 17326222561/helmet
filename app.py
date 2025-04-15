@@ -37,6 +37,17 @@ def handle_nan_values(value):
 def index():
     return render_template('index.html')
 
+@app.route('/clearCaching')
+def clearCaching():
+    files = os.listdir('uploads')
+    try:
+        for file in files:
+            os.remove(os.path.join('uploads', file))
+        return jsonify({'success': f'共删除了{len(files)}个文件'}),200
+    except Exception as e:
+        return jsonify({'error':f'文件删除错误{e}'}), 400
+
+
 
 
 
@@ -193,6 +204,10 @@ def upload_stl():
 # 获取上传的文件
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    file_path=os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if not os.path.isfile(file_path):
+        return jsonify({"error": f"File '{filename}' not found"}),404
+
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # 获取templates目录下的静态文件
@@ -203,5 +218,4 @@ def templates_file(filename):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # 默认 5000，Render 会覆盖为 $PORT
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)
