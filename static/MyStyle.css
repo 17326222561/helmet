@@ -1,0 +1,500 @@
+:root {
+    --primary-color: #2196F3;
+    --secondary-color: #FFC107;
+    --danger-color: #F44336;
+    --success-color: #4CAF50;
+    --text-color: #333;
+    --border-radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background-image: url('/static/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 85%;
+    margin: 20px auto 20px 200px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: none;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.header h1 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.file-input-group {
+    margin-bottom: 20px;
+    background: transparent;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 255, 255);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.file-input-group:hover {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.file-input-group button {
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255);
+    color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    border-color: rgba(255, 255, 255);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.file-input-group button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: white;
+    transform: translateY(-1px);
+}
+
+.file-input-group input[type="text"] {
+    margin-left: 15px;
+    padding: 10px;
+    width: calc(100% - 220px);
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}
+
+.button-group {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 180px;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 20px 15px;
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+    z-index: 1000;
+}
+
+.button-group button {
+    background-color: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+    margin: 0;
+}
+
+.button-group button:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.button-group button:active {
+    transform: scale(0.98);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.button-group .primary-button {
+    border-color: rgba(33, 150, 243, 0.7) !important;
+    background-color: rgba(33, 150, 243, 0.2);
+}
+
+.button-group .primary-button:hover {
+    background-color: rgba(33, 150, 243, 0.4);
+    border-color: rgba(33, 150, 243, 0.9) !important;
+}
+
+.radio-group {
+    background: transparent;
+    padding: 10px 0;
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.radio-group label {
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.radio-group input[type="radio"] {
+    cursor: pointer;
+    appearance: none;
+    background-color: transparent;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+}
+
+.radio-group input[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--primary-color);
+}
+
+.radio-group input[type="radio"]:checked::before {
+    transform: scale(1);
+}
+
+.tab-group {
+    margin-top: 30px;
+    width: 100%;
+}
+
+.tab-button {
+    background-color: transparent;
+    color: white;
+    border: 3px solid var(--danger-color);
+    padding: 12px 25px;
+    margin-right: 5px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.tab-button:hover {
+    background-color: rgba(211, 47, 47, 0.2);
+}
+
+.tab-button.active {
+    background-color: rgba(211, 47, 47, 0.3);
+}
+
+.tab-content {
+    background-color: transparent;
+    padding: 25px;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    min-height: 40vh;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    width: 100%;
+}
+
+#dangerContent {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: transparent;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    line-height: 1.6;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+}
+
+.action-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.action-button:hover {
+    background-color: #1976D2;
+    transform: translateY(-1px);
+}
+
+#sidebar-logo {
+    width: 120px;
+    height: auto;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+#sidebar-logo:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+#chartContainer {
+    width: 100%;
+    height: 40vh;
+    margin-top: 20px;
+    display: none;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    z-index: 10;
+}
+
+#model-viewer {
+    width: 100%;
+    height: 40vh;
+    margin-top: 20px;
+    border: 2px solid rgba(255, 255, 255, 1);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.1);
+    position: relative;
+    backdrop-filter: blur(5px);
+}
+
+#model-viewer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(33, 150, 243, 1);
+    border-radius: calc(var(--border-radius) - 2px);
+    pointer-events: none;
+    margin: 4px;
+}
+
+#model-viewer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 1);
+    border-radius: calc(var(--border-radius) - 4px);
+    pointer-events: none;
+    margin: 8px;
+}
+
+.upload-progress {
+    width: 100%;
+    margin: 10px 0;
+    display: none;
+}
+
+.upload-status {
+    text-align: center;
+    margin-bottom: 5px;
+    color: white;
+    font-size: 14px;
+    opacity: 1;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 20px;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.excel-container {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 1);
+    overflow: hidden;
+    width: 100%;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.excel-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.excel-table th {
+    background: rgba(33, 150, 243, 0.3);
+    color: white;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.excel-table td {
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.excel-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.excel-table tbody tr:hover {
+    background: rgba(33, 150, 243, 0.1);
+}
+
+.excel-table td.numeric {
+    text-align: right;
+}
+
+.excel-table td.text {
+    text-align: left;
+}
+
+.table-controls {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.table-controls input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    min-width: 200px;
+}
+
+.table-controls select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(50, 50, 50, 0.8);
+    color: white;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: calc(100% - 10px);
+    background-position-y: center;
+    padding-right: 30px;
+}
+
+.table-controls select option {
+    background: #333;
+    color: white;
+}
+
+.table-pagination {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.page-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.page-buttons button {
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.page-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.stlFilePath :disabled {
+    color: #808080;
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.stlFilePath {
+    background-color: #ffffff;
+    color: #000000;
+    cursor: text;
+    opacity: 1;
+}

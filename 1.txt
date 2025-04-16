@@ -1,0 +1,31 @@
+文件夹设置，一般使用这个文件结构，否则flask找不到-----------------------------------------------------------------------------
+static：存放一些静态文件，如图片、css文件、js文件
+templates：存放.html文件
+uploads：存放缓存文件，供后端使用
+.py
+
+flask的初始化设置-----------------------------------------------------------------------------
+app = Flask(__name__)
+# 设置JSON编码
+app.config['JSON_AS_ASCII'] = False
+# 设置上传文件夹路径
+app.config['UPLOAD_FOLDER'] = 'uploads'
+# 确保上传文件夹存在
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+主页路由的设置，使用render_template可以直接导航到html，文件夹结构对不需要输入路径-----------------------------------------------------------------------------
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+连接css文件和js文件-----------------------------------------------------------------------------
+<link rel="stylesheet" href="/static/MyStyle.css">
+<script src="/static/MyStyle.js"></script>放到body里面
+
+文件选择器-----------------------------------------------------------------------------
+<input type="file" id="stlFileInput" accept=".stl" style="display: none;">
+<button onclick="document.getElementById('stlFileInput').click()">请选择stl模型</button>
+通过getElementById选择DOM对象，当选择到文件触发函数，函数传递了一个事件，通过const file = event.target.files[0];获取文件
+document.getElementById('stlFileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;

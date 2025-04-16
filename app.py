@@ -195,6 +195,7 @@ def upload_stl():
     global stl_path
     stl_path=filename
     file.save(filename)
+
     
     return jsonify({
         'message': '文件上传成功',
