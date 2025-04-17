@@ -7,8 +7,11 @@ import torch
 import model_pre
 import trimesh
 
-excel_path = None
-stl_path = None
+
+
+
+excel_path=None
+stl_path=None
 
 app = Flask(__name__)
 # 设置JSON编码
@@ -29,11 +32,25 @@ def handle_nan_values(value):
         return int(value)
     return str(value)
 
-
 # 首页路由
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/clearCaching')
+def clearCaching():
+    files = os.listdir('uploads')
+    try:
+        for file in files:
+            os.remove(os.path.join('uploads', file))
+        return jsonify({'success': f'共删除了{len(files)}个文件'}),200
+    except Exception as e:
+        return jsonify({'error':f'文件删除错误{e}'}), 400
+
+
+
+
+
 
 
 @app.route('/predict', methods=['GET', 'POST'])
@@ -116,7 +133,6 @@ def predict():
 
     return render_template('index.html')
 
-
 # Excel文件上传和处理路由
 @app.route('/upload_excel', methods=['POST'])
 def upload_excel():
@@ -142,6 +158,7 @@ def upload_excel():
         # 将所有数据（包括表头）转换为字符串格式，避免类型问题
         df = df.astype(str)
 
+
         # 获取表头（第8行）
         headers = df.columns.tolist()
 
@@ -160,6 +177,7 @@ def upload_excel():
         return jsonify({'error': f'文件处理错误: {str(e)}'}), 500
 
 
+
 # 文件上传路由
 @app.route('/upload_stl', methods=['POST'])
 def upload_stl():
@@ -175,20 +193,23 @@ def upload_stl():
     # 安全地保存文件
     filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     global stl_path
-    stl_path = filename
+    stl_path=filename
     file.save(filename)
+
 
     return jsonify({
         'message': '文件上传成功',
         'filename': file.filename
     })
 
-
 # 获取上传的文件
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    file_path=os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if not os.path.isfile(file_path):
+        return jsonify({"error": f"File '{filename}' not found"}),404
 
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # 获取templates目录下的静态文件
 @app.route('/templates/<path:filename>')
@@ -196,5 +217,6 @@ def templates_file(filename):
     return send_from_directory('templates', filename)
 
 
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80, debug=False)
+    app.run(debug=True, host='0.0.0.0', port=5000)
