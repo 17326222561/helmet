@@ -1,6 +1,7 @@
 let scene, camera, renderer, controls;
 let isStlUploading = false; // 添加STL上传状态标志
 
+window.addEventListener('beforeunload',clearCaching)
 // 初始化3D场景
 function initScene() {
     scene = new THREE.Scene();
