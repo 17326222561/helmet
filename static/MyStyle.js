@@ -559,6 +559,7 @@ function clearWindow() {
 
 }
 
+
 async function clearCaching() {
     try{
         const response=await fetch('/clearCaching',{method:'GET'})
@@ -608,11 +609,6 @@ function switchTab(tab) {
         }
     }
 }
-
-window.addEventListener('beforeunload',function (event){
-    clearCaching()
-})
-
 
 // 修改绘制图表的函数
 function drawAccelerationChart(accelerationData) {
@@ -769,5 +765,4 @@ function drawAccelerationChart(accelerationData) {
 
     // 显示图表容器
     document.getElementById('chartContainer').style.display = 'block';
-
 }
