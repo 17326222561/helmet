@@ -386,6 +386,9 @@ function startPrediction() {
     if (predictionType === '加速度') {
         loadingText.textContent = '加速度预测中，这可能需要几分钟时间...';
     }
+    if (predictionType === '危险点') {
+        loadingText.textContent = '危险点预测中，这可能需要几分钟时间...';
+    }
 
     // 设置较长的超时时间（5分钟）
     const controller = new AbortController();
@@ -482,8 +485,9 @@ function displayDangerPoints(points) {
     // 创建点的材质
     const material = new THREE.PointsMaterial({
         color: 0xff0000,  // 红色
-        size: 8.0,        // 增大点的大小
+        size: 20,        // 增大点的大小
         sizeAttenuation: true,
+
         transparent: true,
         opacity: 0.8,
         blending: THREE.AdditiveBlending  // 添加混合效果使点更亮
@@ -494,7 +498,7 @@ function displayDangerPoints(points) {
 
     // 为每个点添加一个小球体，使其更容易看见
     points.forEach(point => {
-        const sphereGeometry = new THREE.SphereGeometry(2.0, 16, 16); // 增大球体半径
+        const sphereGeometry = new THREE.SphereGeometry(5, 16, 16); // 增大球体半径
         const sphereMaterial = new THREE.MeshPhongMaterial({
             color: 0xff0000,
             transparent: true,
@@ -562,20 +566,9 @@ function clearWindow() {
 
 
 async function clearCaching() {
-    try{
-        const response=await fetch('/clearCaching',{method:'GET'})
-        if (response.ok){
-            const data=await response.json()
-            alert(`${data.success}`)
-
-        }
-    }catch (error){
-        alert(`无法删除文件：${error.message}`)
-    }
+        await fetch('/clearCaching',{method:'GET'})
 
 }
-
-
 
 
 
