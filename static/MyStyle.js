@@ -1,7 +1,8 @@
 let scene, camera, renderer, controls;
 let isStlUploading = false; // 添加STL上传状态标志
 
-window.addEventListener('beforeunload',clearCaching)
+
+
 // 初始化3D场景
 function initScene() {
     scene = new THREE.Scene();
@@ -60,6 +61,8 @@ function onWindowResize() {
 // 初始化场景
 initScene();
 
+
+
 // 处理文件选择
 document.getElementById('stlFileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
@@ -68,92 +71,112 @@ document.getElementById('stlFileInput').addEventListener('change', function(even
 
     // 更新文件路径显示
     document.getElementById('stlFilePath').value = file.name;
+    fetch('/upload_stl',{
+        method:'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+            'filename':file.name,
+            'filesize':file.size,
+        })
+    })
+        .then(response=>response.json())
+        .then(data=>{
+            if (data.status==='error'){
+                // 显示进度条
+                const progressBar = document.querySelector('.progress-bar');
+                const progressContainer = document.querySelector('.upload-progress');
+                const uploadStatus = document.querySelector('.upload-status');
+                progressContainer.style.display = 'block';
+                uploadStatus.style.display = 'block';
+                progressBar.style.width = '0%';
 
-    // 显示进度条
-    const progressBar = document.querySelector('.progress-bar');
-    const progressContainer = document.querySelector('.upload-progress');
-    const uploadStatus = document.querySelector('.upload-status');
-    progressContainer.style.display = 'block';
-    uploadStatus.style.display = 'block';
-    progressBar.style.width = '0%';
+                // 设置上传状态
+                isStlUploading = true;
+                const predictButton = document.querySelector('.primary-button');
+                predictButton.disabled = true;
+                predictButton.textContent = '文件上传中...';
 
-    // 设置上传状态
-    isStlUploading = true;
-    const predictButton = document.querySelector('.primary-button');
-    predictButton.disabled = true;
-    predictButton.textContent = '文件上传中...';
+                // 禁用STL文件选择按钮
+                const stlFileInput = document.getElementById('stlFileInput');
+                const stlFileButton = document.querySelector('.file-input-group button');
+                stlFileInput.disabled = true;
+                stlFileButton.disabled = true;
+                stlFileButton.style.opacity = '0.5';
+                stlFileButton.style.cursor = 'not-allowed';
+                stlFilePath.disabled = true;
 
-    // 禁用STL文件选择按钮
-    const stlFileInput = document.getElementById('stlFileInput');
-    const stlFileButton = document.querySelector('.file-input-group button');
-    stlFileInput.disabled = true;
-    stlFileButton.disabled = true;
-    stlFileButton.style.opacity = '0.5';
-    stlFileButton.style.cursor = 'not-allowed';
-    stlFilePath.disabled = true;
+                // 创建FormData对象用于后端上传
+                const formData = new FormData();
+                formData.append('stl_file', file);
 
-    // 创建FormData对象用于后端上传
-    const formData = new FormData();
-    formData.append('stl_file', file);
+                // 创建XMLHttpRequest对象来获取上传进度
+                const xhr = new XMLHttpRequest();
 
-    // 创建XMLHttpRequest对象来获取上传进度
-    const xhr = new XMLHttpRequest();
+                // 监听上传进度
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                        console.log('上传进度: ' + percentComplete + '%');
+                    }
+                });
 
-    // 监听上传进度
-    xhr.upload.addEventListener('progress', function(e) {
-        if (e.lengthComputable) {
-            const percentComplete = (e.loaded / e.total) * 100;
-            progressBar.style.width = percentComplete + '%';
-            console.log('上传进度: ' + percentComplete + '%');
-        }
-    });
+                // 监听上传完成
+                xhr.addEventListener('load', function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        // 上传完成后隐藏进度条
+                        setTimeout(() => {
+                            progressContainer.style.display = 'none';
+                            uploadStatus.style.display = 'none';
+                        }, 500);
 
-    // 监听上传完成
-    xhr.addEventListener('load', function() {
-        if (xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            if (data.error) {
-                alert(data.error);
-                return;
+                        // 重置上传状态和按钮
+                        isStlUploading = false;
+                        predictButton.disabled = false;
+                        predictButton.textContent = '开始预测';
+
+                        // 重新启用STL文件选择按钮
+                        stlFileInput.disabled = false;
+                        stlFileButton.disabled = false;
+                        stlFileButton.style.opacity = '1';
+                        stlFileButton.style.cursor = 'pointer';
+                        stlFilePath.disabled = false;
+                    } else {
+                        alert('上传文件时发生错误');
+                        progressContainer.style.display = 'none';
+                        uploadStatus.style.display = 'none';
+                        // 重置上传状态和按钮
+                        isStlUploading = false;
+                        predictButton.disabled = false;
+                        predictButton.textContent = '开始预测';
+
+                        // 重新启用STL文件选择按钮
+                        stlFileInput.disabled = false;
+                        stlFileButton.disabled = false;
+                        stlFileButton.style.opacity = '1';
+                        stlFileButton.style.cursor = 'pointer';
+                        stlFilePath.disabled = false;
+                    }
+                });
+
+                xhr.open('POST', '/upload_stl', true);
+                xhr.send(formData);
             }
-            // 上传完成后隐藏进度条
-            setTimeout(() => {
-                progressContainer.style.display = 'none';
-                uploadStatus.style.display = 'none';
-            }, 500);
+            else if (data.status==='redirect'){
+                window.location.href=data.url
+                alert(data.message)
+            }
+        })
 
-            // 重置上传状态和按钮
-            isStlUploading = false;
-            predictButton.disabled = false;
-            predictButton.textContent = '开始预测';
 
-            // 重新启用STL文件选择按钮
-            stlFileInput.disabled = false;
-            stlFileButton.disabled = false;
-            stlFileButton.style.opacity = '1';
-            stlFileButton.style.cursor = 'pointer';
-            stlFilePath.disabled = false;
-        } else {
-            alert('上传文件时发生错误');
-            progressContainer.style.display = 'none';
-            uploadStatus.style.display = 'none';
-            // 重置上传状态和按钮
-            isStlUploading = false;
-            predictButton.disabled = false;
-            predictButton.textContent = '开始预测';
 
-            // 重新启用STL文件选择按钮
-            stlFileInput.disabled = false;
-            stlFileButton.disabled = false;
-            stlFileButton.style.opacity = '1';
-            stlFileButton.style.cursor = 'pointer';
-            stlFilePath.disabled = false;
-        }
-    });
-
-    // 发送请求到后端
-    xhr.open('POST', '/upload_stl', true);
-    xhr.send(formData);
 
     // 同时在前端直接加载和显示STL文件
     const reader = new FileReader();
@@ -213,18 +236,21 @@ let filteredData = [];
 
 // 处理Excel文件上传
 function selectInputFile() {
-    const input=document.createElement('input')
+    const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.xlsx,.xls';
     input.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
-        // Display the selected file name
+        // 显示选中的文件名
         document.getElementById('excelFilePath').value = file.name;
+
+
 
         const formData = new FormData();
         formData.append('excel_file', file);
+        formData.append('filename',file.name)
+        formData.append('filesize',file.size)
 
         try {
             const response = await fetch('/upload_excel', {
@@ -237,22 +263,24 @@ function selectInputFile() {
                 alert(data.error);
                 return;
             }
+            else if(data.status==='redirect'){
+                window.location.href='/'
+                alert(data.message)
+                return;
+            }
 
             excelData = data;
-            excelData = data; // Store raw data
 
-            // Populate column search dropdown
+            // 填充列搜索下拉框
             const columnSelect = document.getElementById('columnSearchSelect');
-            // Clear previous options except the default
             columnSelect.options.length = 1;
             excelData.columns.forEach((col, index) => {
                 const option = document.createElement('option');
-                option.value = index; // Use index as value
                 option.textContent = col;
                 columnSelect.appendChild(option);
             });
 
-            // Initial display setup
+            // 初始显示设置
             filteredData = [...data.data];
             displayExcelData();
             document.getElementById('excelContainer').style.display = 'block';
@@ -353,12 +381,8 @@ document.getElementById('nextPage').addEventListener('click', () => {
     }
 });
 
+// 修改预测函数
 function startPrediction() {
-    // 检查是否正在上传文件
-    if (isStlUploading) {
-        alert('请等待STL文件上传完成');
-        return;
-    }
 
     // 检查是否已上传STL文件
     const stlFilePath = document.getElementById('stlFilePath').value;
@@ -374,27 +398,12 @@ function startPrediction() {
         return;
     }
 
+    const predictionType = document.querySelector('input[name="type"]:checked').id === 'cnas' ? '危险点' : '加速度';
+    
     // 显示加载遮罩
     const loadingOverlay = document.querySelector('#model-viewer #loadingOverlay');
-    const loadingText = document.querySelector('#loadingText');
     loadingOverlay.style.display = 'flex';
-
-    // 获取选中的预测类型
-    const predictionType = document.getElementById('cnas').checked ? '危险点' : '加速度';
-
-    // 如果是加速度预测，更新加载文本
-    if (predictionType === '加速度') {
-        loadingText.textContent = '加速度预测中，这可能需要几分钟时间...';
-    }
-    if (predictionType === '危险点') {
-        loadingText.textContent = '危险点预测中，这可能需要几分钟时间...';
-    }
-
-    // 设置较长的超时时间（5分钟）
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 300000);
-
-    // 发送预测请求到后端
+    
     fetch('/predict', {
         method: 'POST',
         headers: {
@@ -402,61 +411,36 @@ function startPrediction() {
         },
         body: JSON.stringify({
             predictionType: predictionType,
-            stlFile: stlFilePath,
-            excelFile: excelFilePath
-        }),
-        signal: controller.signal
+            'stlFileName':stlFilePath,
+            'excelFileName':excelFilePath,
+        })
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json().then(data => {
+                throw new Error(data.message || '预测请求失败');
+            });
         }
         return response.json();
     })
     .then(data => {
-        clearTimeout(timeoutId);
-        // 隐藏加载遮罩
-        loadingOverlay.style.display = 'none';
-
         if (data.status === 'success') {
             if (predictionType === '危险点') {
-                // 处理危险点预测结果
-                const points = data.points;
-                console.log("接收到的危险点数据:", points);
-
-                // 在3D视图中显示危险点
-                displayDangerPoints(points);
-                // 切换到危险点标签页
-                switchTab('danger');
-                alert(data.message);
-            } else {
-                // 处理加速度预测结果
-                const accelerationData = data.accelerate;
-                console.log("接收到的加速度数据:", accelerationData);
-
-                // 切换到加速度标签页
-                switchTab('acceleration');
-                // 绘制加速度图表
-                drawAccelerationChart(accelerationData);
-                // 显示图表容器
-                document.getElementById('chartContainer').style.display = 'block';
-                alert(data.message);
+                displayDangerPoints(data.points);
+            } else if (predictionType === '加速度') {
+                drawAccelerationChart(data.accelerate[0]);
             }
         } else {
-            alert('预测失败：' + data.message);
+            alert(data.message || '预测失败');
         }
     })
     .catch(error => {
-        clearTimeout(timeoutId);
+        console.error('预测请求失败:', error);
+        alert(error.message || '预测请求失败，请重试');
+    })
+    .finally(() => {
         // 隐藏加载遮罩
         loadingOverlay.style.display = 'none';
-
-        if (error.name === 'AbortError') {
-            alert('预测超时，请重试');
-        } else {
-            console.error('Error:', error);
-            alert('预测过程中发生错误: ' + error.message);
-        }
     });
 }
 
@@ -518,18 +502,26 @@ function displayDangerPoints(points) {
 }
 
 async function exportTable() {
-    const filename = 'danger_points.csv';
+    const ExcelName=document.getElementById('excelFilePath').value
+    const StlName=document.getElementById('stlFilePath').value
+    if (!ExcelName){
+        alert('请先导入excel文件')
+        return
+    }
+    else if(!StlName){
+        alert('请先导入stl文件')
+        return
+    }
 
+    const filename=`${StlName}_${ExcelName}_danger.csv`
     try {
-        // 检查文件是否存在，使用 HEAD 请求（更轻量）
-        const checkResponse = await fetch(`/uploads/${filename}`, { method: 'HEAD' });
+        const checkResponse = await fetch(`/uploads/${StlName}/${ExcelName}/danger`, { method: 'HEAD' });
         if (!checkResponse.ok) {
             throw new Error('文件不存在');
         }
 
-        // 如果文件存在，触发下载
         const link = document.createElement('a');
-        link.href = `/uploads/${filename}`;
+        link.href = `/uploads/${StlName}/${ExcelName}/danger`;
         link.download = filename;
         document.body.appendChild(link);
         link.click();
@@ -541,36 +533,45 @@ async function exportTable() {
 }
 
 async function exportAccelerate() {
-    const filename = 'acceleration_results.csv';
-    try{
-        const response=await fetch(`uploads/${filename}`,{method:'HEAD'});
-        if (!response.ok){
-            throw new Error('文件不存在')
+    const ExcelName=document.getElementById('excelFilePath').value
+    const StlName=document.getElementById('stlFilePath').value
+    const filename=`${StlName}_${ExcelName}_danger.csv`
+    try {
+        const checkResponse = await fetch(`/uploads/${StlName}/${ExcelName}/danger`, { method: 'HEAD' });
+        if (!checkResponse.ok) {
+            throw new Error('文件不存在');
         }
-        const link=document.createElement("a")
-        link.href=`uploads/${filename}`
-        link.download=filename
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-    }catch (error){
-        alert(`无法下载文件：${error.message}`)
-    }
 
+        const link = document.createElement("a");
+        link.href = `/uploads/${StlName}/${ExcelName}/acceleration`;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        alert(`无法下载文件：${error.message}`);
+    }
 }
 
 function clearWindow() {
-    window.location.href='/'
 
+    window.location.href = '/';
 }
-
 
 async function clearCaching() {
-        await fetch('/clearCaching',{method:'GET'})
+    try {
+        const response = await fetch('/clearCaching', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
 
+    } catch (error) {
+        console.error('清除缓存失败:', error);
+        alert('清除缓存失败，请重试');
+    }
 }
-
-
 
 function clearReset() {
     alert('清除重置功能将在后续实现');
